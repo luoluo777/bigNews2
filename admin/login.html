@@ -38,6 +38,67 @@
     </div>
   </div>
 
+  <!-- Modal模态框 -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">温馨提示！</h4>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">确认</button>
+          <!-- <button type="button" class="btn btn-primary">取消</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./libs/http.js"></script>
+  <script>
+    $(function () {
+      // 1 给登录按钮设计点击事件
+      $('.input_sub').on('click', function (e) {
+        // 1.1 阻断默认跳转
+        e.preventDefault();
+        // 1.2 获取用户名和密码
+        var username = $('.input_txt').val().trim();
+        var password = $('.input_pass').val().trim();
+        //  1.3 非空判断
+        if (username == "" || password == "") {
+          // alert('用户名密码不能为空');
+          $('.modal-body').text('用户名密码不能为空');
+          $('#myModal').modal();
+          return;
+        };
+        //  1.4 发送ajax请求登录
+        $.ajax({
+          type: 'post',
+          url: BigNews.user_login,
+          data: {
+            username: username,
+            password: password
+          },
+          success: function (backData) {
+            console.log(backData);
+            $('.modal-body').text(backData.msg);
+            $('#myModal').modal();
+            if (backData.code == 200) {
+              //  储存token
+              localStorage.setItem('token', backData.token);
+              // alert(backData.msg);            
+              $('#myModal').on('hidden.bs.modal', function (e) {
+                window.location.href = "./index.html";
+              })
+            }
+          }
+        })
+      })
+    })
+  </script>
 </body>
 
 </html>

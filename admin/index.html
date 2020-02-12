@@ -54,5 +54,27 @@
 
         </div>
     </div>
+    <script src="./libs/http.js"></script>
+    <script>
+        $(function () {
+            // 2 发送ajax请求获取用户信息
+            $.ajax({
+                type: 'get',
+                url: BigNews.user_info,
+                success: function (backData) {
+                    console.log(backData);
+                    $('.user_info').find('img').attr('src', backData.data.userPic).next().text('欢迎  ' + backData.data.nickname);
+                    $('.user_center_link').find('img').attr('src', backData.data.userPic);
+                }
+            });
+            //  3 退出按钮点击事件
+            $('.logout').on('click', function () {
+                // 3.1 点击后删除token
+                localStorage.removeItem('token');
+                window.location.href='./login.html';
+            })
+        })
+    </script>
 </body>
+
 </html>
