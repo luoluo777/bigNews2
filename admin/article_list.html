@@ -13,6 +13,7 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 引入模板引擎js文件 -->
     <script src="./libs/template-web.js"></script>
+    <script src="./libs/http.js"></script>
 </head>
 
 <body>
@@ -72,6 +73,65 @@
             </div>
         </div>
     </div>
+    <!-- 准备一个文章分类模板 -->
+    <script id="temp_cat" type="text/html">
+    <option value="">所有分类</option>
+    {{each data v}}
+    <option value="{{v.id}}">{{v.name}}</option>
+    {{/each}}
+    </script>
+    <!-- 准备一个文章列表模板 -->
+    <script id="temp_aclist" type="text/html">
+        {{each data.data v}}
+        <tr>
+            <td>{{v.title}}</td>
+            <td>{{v.author}}</td>
+            <td>{{v.category}}</td>
+            <td class="text-center">{{v.date}}</td>
+            <td class="text-center">{{v.state}}</td>
+            <td class="text-center">
+                <a href="article_edit.html" class="btn btn-default btn-xs" data-id="{{v.id}}">编辑</a>
+                <a href="javascript:void(0);" class="btn btn-danger btn-xs delete" data-id="{{v.id}}">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+        </script>
+    <script>
+        //8 文章列表页面
+        $(function () {
+            //  8.1 发送ajax获取文章列表
+            $.ajax({
+                type: 'get',
+                url: BigNews.category_list,
+                success: function (backData) {
+                    // console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('temp_cat', backData);
+                        $('#selCategory').html(resHtml);
+                    }
+                }
+            });
+            var acId = $('#selCategory').val();
+            var acState = $('#selStatus').val();
+            $.ajax({
+                type: 'get',
+                url: BigNews.article_query,
+                data: {
+                    type: acId,
+                    state: acState,
+                    page: 1,
+                    perpage: 6
+                },
+                success: function (backData) {
+                    // console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('temp_aclist', backData);
+                        $('table tbody').html(resHtml);
+                    }
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>
